@@ -75,7 +75,7 @@ private:
     void connect_fail_msg(QString &str, int msec = 3000);
     bool end_init;
 
-    char *machine_ip;
+    QString machine_ip;
     int band_24g_start_idx;
     int band_24g_end_idx;
     int band_5g_start_idx;
@@ -104,13 +104,13 @@ private:
 
 
 private slots:
-    void on_checkBox_clicked(bool checked);
+    void on_use_localhost_clicked(bool checked);
     void on_cbo_port_option_currentIndexChanged(QString );
     void on_band_select_currentIndexChanged(int index);
     void on_cbo_total_port_currentIndexChanged(int index);
     void on_ANT_num_currentIndexChanged(int index);
-    void on_vsg_port_currentIndexChanged(int index);
-    void on_vsa_port_currentIndexChanged(int index);
+//    void on_vsg_port_currentIndexChanged(int index);
+//    void on_vsa_port_currentIndexChanged(int index);
     void on_btn_measure_loss_clicked();
     void on_btn_save_all_port_loss_clicked();
 };

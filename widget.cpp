@@ -28,9 +28,7 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
     retrieve_ip();
-//    ui->gb_setting->setStyleSheet(#gb_setting{
-//        "border-image:url(\":/connection_sketch/setting_pic.png\")"});
-    //get idx for recording data start point idx
+    //get idx for recording data start point idx for further interpolation usage
     for( int idx = 0; idx < _countof(Measure_Channel); ++idx){
         if(Measure_Channel[idx] >= 2400){
             band_24g_start_idx = idx;
@@ -51,11 +49,11 @@ Widget::Widget(QWidget *parent) :
             break;
         }
     }
-
-    vsa_model = new QStringListModel(this);
-    ui->vsa_port->setModel(vsa_model);
-    vsg_model = new QStringListModel(this);
-    ui->vsg_port->setModel(vsg_model);
+    //////////////////////////////////////////////////////////////////////////////////////////////
+//    vsa_model = new QStringListModel(this);
+//    ui->vsa_port->setModel(vsa_model);
+//    vsg_model = new QStringListModel(this);
+//    ui->vsg_port->setModel(vsg_model);
     port_option_model = new QStringListModel(this);
     ui->cbo_port_option->setModel(port_option_model);
 
@@ -66,7 +64,8 @@ Widget::Widget(QWidget *parent) :
 
     //tcpSocket->abort();
     tcpSocket = new QTcpSocket(this);
-    machine_ip = ui->ip_destination->text().toAscii().data();
+//    machine_ip = ui->ip_destination->text().toAscii().data();
+    machine_ip = ui->cbo_ip_destination->currentText();
     tcpSocket->connectToHost(machine_ip, 5499);
 
     connected = tcpSocket->waitForConnected(1000);
@@ -94,8 +93,8 @@ Widget::Widget(QWidget *parent) :
 
 //            vsa_model = new QStringListModel(this);
 //            ui->vsa_port->setModel(vsa_model);
-            vsa_model->setStringList(p1p5);
-
+            //vsa_model->setStringList(p1p5);
+			
             ui->cbo_total_port->setCurrentIndex(2);
 //            vsa_port = 5;
 //            vsg_port = 8;
@@ -106,14 +105,17 @@ Widget::Widget(QWidget *parent) :
     }
     else {
         port_cnt = 4;
-        vsa_model->setStringList(p1);
-        ui->vsa_port->setItemData(0,1);
-        vsg_model->setStringList(p2_to_p4);
-        port_option_model->setStringList(p4_option);
+//        vsa_model->setStringList(p1);
+//        ui->vsa_port->setItemData(0,1);
+//        vsg_model->setStringList(p2_to_p4);
+//        port_option_model->setStringList(p4_option);
+        ui->cbo_total_port->setCurrentIndex(1);
+        ui->cbo_port_option->setCurrentIndex(10);
+
         connect_fail_msg(QString("Can't connect to machine. "),1500);
     }
 
-    ui->vsa_port->setCurrentIndex(0);
+    //ui->vsa_port->setCurrentIndex(0);
 
 
     //initiate table model
@@ -282,7 +284,10 @@ void Widget::on_btn_measure_loss_clicked()
 {
     //if()
     tcpSocket->abort();
-    tcpSocket->connectToHost( ui->ip_destination->text().toAscii().data(), 5499);
+	if(ui->use_localhost->checkState())
+		machine_ip = ui->cbo_ip_destination->currentText();
+    tcpSocket->connectToHost(machine_ip, 5499);
+	qDebug()<<machine_ip;
     connected = tcpSocket->waitForConnected(1000);
 
     if(connected){
@@ -334,10 +339,10 @@ void Widget::on_btn_measure_loss_clicked()
             tcpSocket->readAll();
         }
 
-        //get port
-        int cbo_vsa_index = ui->vsa_port->currentIndex();
-        vsa_port = cbo_vsa_index * 4 + 1;
-        vsg_port = vsa_port + ui->vsg_port->currentIndex() + 1;
+//        //get port
+//        int cbo_vsa_index = ui->vsa_port->currentIndex();
+//        vsa_port = cbo_vsa_index * 4 + 1;
+//        vsg_port = vsa_port + ui->vsg_port->currentIndex() + 1;
 
 
 
@@ -459,8 +464,8 @@ void Widget::connect_fail_msg(QString &str, int msec){
 }
 
 
-void Widget::on_vsa_port_currentIndexChanged(int index)
-{
+//void Widget::on_vsa_port_currentIndexChanged(int index)
+//{
 //    if(index == 0){
 //        vsg_model->setStringList(p2_to_p4);
 //    }
@@ -470,7 +475,7 @@ void Widget::on_vsa_port_currentIndexChanged(int index)
 //    vsa_port = index * 4 + 1;
 //    qDebug()<< "vsa" << vsa_port;
 //    ui->vsg_port->setCurrentIndex(2);
-}
+//}
 
 void::Widget::scroll_to_specified(){
     if(end_init){
@@ -482,12 +487,12 @@ void::Widget::scroll_to_specified(){
     }
 }
 
-void Widget::on_vsg_port_currentIndexChanged(int index)
-{
+//void Widget::on_vsg_port_currentIndexChanged(int index)
+//{
 //    vsg_port = vsa_port + 1 + ui->vsg_port->currentIndex();
 //    change_sketch();
 //    scroll_to_specified();
-}
+//}
 
 void Widget::on_ANT_num_currentIndexChanged(int index)
 {
@@ -502,29 +507,32 @@ void Widget::on_cbo_total_port_currentIndexChanged(int index)
     qDebug()<<"xxxport_cnt"<<port_cnt;
     switch(port_cnt){
     case 2:
-        ui->vsa_port->setCurrentIndex(0);
-        vsg_model->setStringList(p2_to_p4);
-        ui->vsg_port->setCurrentIndex(0);
-        ui->vsa_port->setDisabled(true);
-        ui->vsg_port->setDisabled(true);
+//        ui->vsa_port->setCurrentIndex(0);
+//        vsg_model->setStringList(p2_to_p4);
+//        ui->vsg_port->setCurrentIndex(0);
+//        ui->vsa_port->setDisabled(true);
+//        ui->vsg_port->setDisabled(true);
         port_option_model->setStringList(p2_option);
+        ui->cbo_port_option->setCurrentIndex(0);
         break;
     case 4:
-        vsa_model->setStringList(p1);
-        vsg_model->setStringList(p2_to_p4);
+//        vsa_model->setStringList(p1);
+//        vsg_model->setStringList(p2_to_p4);
 
-        ui->vsa_port->setCurrentIndex(0);
-        ui->vsa_port->setDisabled(false);
-        ui->vsg_port->setDisabled(false);
+//        ui->vsa_port->setCurrentIndex(0);
+//        ui->vsa_port->setDisabled(false);
+//        ui->vsg_port->setDisabled(false);
         port_option_model->setStringList(p4_option);
+        ui->cbo_port_option->setCurrentIndex(10);
         break;
     case 8:
-        vsa_model->setStringList(p1p5);
-        vsg_model->setStringList(p6_to_p8);
-        ui->vsa_port->setCurrentIndex(0);
-        ui->vsa_port->setDisabled(false);
-        ui->vsg_port->setDisabled(false);
+//        vsa_model->setStringList(p1p5);
+//        vsg_model->setStringList(p6_to_p8);
+//        ui->vsa_port->setCurrentIndex(0);
+//        ui->vsa_port->setDisabled(false);
+//        ui->vsg_port->setDisabled(false);
         port_option_model->setStringList(p8_option);
+        ui->cbo_port_option->setCurrentIndex(25);
         break;
 
     }
@@ -568,8 +576,18 @@ void Widget::calc()
         int rlt_size = measure_end_idx - measure_idx;
 		final_data.clear();
         final_data.resize(rlt_size);
-        float offset_24xx = ui->offset_24xx->text().toFloat();
-        float offset_5xxx = ui->offset_5xxx->text().toFloat();
+
+
+        bool ok = true;
+        float offset_24xx = ui->offset_24xx->text().toFloat(&ok);
+        if(!ok)
+            offset_24xx = 0;
+
+        ok = true;
+        float offset_5xxx = ui->offset_5xxx->text().toFloat(&ok);
+        if(!ok)
+            offset_5xxx = 0;
+
 
         if(measure_24xxMhz && measure_5xxxMhz){
             int i = 0;
@@ -691,6 +709,15 @@ void Widget::on_cbo_port_option_currentIndexChanged(QString str)
             vsg_port = rlt[0].remove("Port").toInt();
             ant_port = rlt[1].remove("(ANT").remove(")").toInt();
     }
+
+    //record ip address in text
+    QFile ip_record_file("./machine_ip_record.txt");
+    if(ip_record_file.open(QIODevice::WriteOnly | QIODevice::Text)){
+        QTextStream out(&ip_record_file);
+        out << machine_ip;
+        ip_record_file.close();
+    }
+
     change_sketch();
     scroll_to_specified();
 }
@@ -718,13 +745,17 @@ void Widget::retrieve_ip(){
         QRegExpValidator *ipValidator = new QRegExpValidator(ipRegex, this);
         ui->cbo_ip_destination->setValidator(ipValidator);
         //////////////////////////////////////////////////
+        ui->cbo_ip_destination->setCurrentIndex(0);
 
     }
 }
 
-void Widget::on_checkBox_clicked(bool checked)
+void Widget::on_use_localhost_clicked(bool checked)
 {
-    if(!checked)
+    if(!checked){
         machine_ip = "127.0.0.1";
-
+        ui->cbo_ip_destination->setEnabled(false);
+    }
+    else
+        ui->cbo_ip_destination->setEnabled(true);
 }

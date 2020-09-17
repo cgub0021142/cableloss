@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1183</width>
-    <height>858</height>
+    <height>718</height>
    </rect>
   </property>
   <property name="font">
@@ -18,8 +18,8 @@
   <property name="windowTitle">
    <string>Widget</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0" colspan="2">
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <widget class="QGroupBox" name="gb_setting">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -35,7 +35,7 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>800</width>
+       <width>99999</width>
        <height>16777215</height>
       </size>
      </property>
@@ -86,42 +86,6 @@
         <string>5 Ghz</string>
        </property>
       </item>
-     </widget>
-     <widget class="QLineEdit" name="ip_destination">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>10</y>
-        <width>131</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>131</width>
-        <height>41</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>999</width>
-        <height>999</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>192.168.206.96</string>
-      </property>
      </widget>
      <widget class="QComboBox" name="cbo_total_port">
       <property name="geometry">
@@ -266,7 +230,7 @@ loss</string>
        <rect>
         <x>215</x>
         <y>126</y>
-        <width>221</width>
+        <width>211</width>
         <height>41</height>
        </rect>
       </property>
@@ -282,7 +246,7 @@ loss</string>
        </font>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox">
+     <widget class="QCheckBox" name="use_localhost">
       <property name="geometry">
        <rect>
         <x>95</x>
@@ -318,20 +282,15 @@ loss</string>
         <pointsize>12</pointsize>
        </font>
       </property>
-      <item>
-       <property name="text">
-        <string>192.168.206.96</string>
-       </property>
-      </item>
      </widget>
     </widget>
    </item>
-   <item row="0" column="2" rowspan="5">
+   <item row="0" column="1" rowspan="3">
     <widget class="QTableView" name="tableView">
      <property name="minimumSize">
       <size>
-       <width>0</width>
-       <height>0</height>
+       <width>300</width>
+       <height>682</height>
       </size>
      </property>
      <attribute name="horizontalHeaderDefaultSectionSize">
@@ -345,10 +304,23 @@ loss</string>
      </attribute>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="1" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0">
     <widget class="QGroupBox" name="gb_connection">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -356,13 +328,13 @@ loss</string>
      <property name="minimumSize">
       <size>
        <width>313</width>
-       <height>300</height>
+       <height>320</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>800</width>
-       <height>400</height>
+       <height>9999</height>
       </size>
      </property>
      <property name="font">
@@ -385,68 +357,6 @@ border-image:url(&quot;:/connection_sketch/1-4.png&quot;);</string>
      </property>
      <property name="checkable">
       <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QComboBox" name="ANT_num">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <item>
-      <property name="text">
-       <string>REF</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>ANT1</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>ANT2</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>ANT3</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>ANT4</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="1" column="1" rowspan="2">
-    <widget class="QComboBox" name="vsa_port">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <item>
-      <property name="text">
-       <string>1</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>5</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QComboBox" name="vsg_port">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
      </property>
     </widget>
    </item>
