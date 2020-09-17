@@ -53,5 +53,6 @@
         <file>connection_sketch/backg.png</file>
         <file>connection_sketch/CABLE-LOSS_icon.ico</file>
         <file>connection_sketch/generate.png</file>
+        <file>connection_sketch/setting_pic.png</file>
     </qresource>
 </RCC>

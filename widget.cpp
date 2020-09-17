@@ -18,6 +18,8 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+//    ui->gb_setting->setStyleSheet(#gb_setting{
+//        "border-image:url(\":/connection_sketch/setting_pic.png\")"});
     //get idx for recording data start point idx
     for( int idx = 0; idx < _countof(Measure_Channel); ++idx){
         if(Measure_Channel[idx] >= 2400){

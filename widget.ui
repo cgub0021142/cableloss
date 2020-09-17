@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>958</width>
-    <height>731</height>
+    <width>1183</width>
+    <height>858</height>
    </rect>
   </property>
   <property name="font">
@@ -18,441 +18,453 @@
   <property name="windowTitle">
    <string>Widget</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="1" column="0">
+    <widget class="QComboBox" name="ANT_num">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
      <item>
-      <widget class="QGroupBox" name="gb_setting">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>394</width>
-         <height>362</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>800</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>16</pointsize>
-        </font>
-       </property>
-       <property name="title">
-        <string>Setting</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0" colspan="3">
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <item>
-           <widget class="QLabel" name="label_vsa_2">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>16</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>machine IP addr</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="ip_destination">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>191</width>
-              <height>41</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>191</width>
-              <height>41</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>16</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>192.168.206.96</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="1" column="0" colspan="3">
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QLabel" name="label_vsa">
-              <property name="font">
-               <font>
-                <pointsize>16</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>VSA(in)</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="vsa_port">
-              <property name="font">
-               <font>
-                <pointsize>16</pointsize>
-               </font>
-              </property>
-              <item>
-               <property name="text">
-                <string>1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>5</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QLabel" name="label_vsg_2">
-              <property name="font">
-               <font>
-                <pointsize>16</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>ANT number</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="ANT_num">
-              <property name="font">
-               <font>
-                <pointsize>16</pointsize>
-               </font>
-              </property>
-              <item>
-               <property name="text">
-                <string>REF</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>ANT1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>ANT2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>ANT3</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>ANT4</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QLabel" name="label_vsg">
-              <property name="font">
-               <font>
-                <pointsize>16</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>VSG(out)</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="vsg_port">
-              <property name="font">
-               <font>
-                <pointsize>16</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_step">
-          <property name="font">
-           <font>
-            <pointsize>16</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>band select</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QComboBox" name="band_select">
-          <property name="font">
-           <font>
-            <pointsize>16</pointsize>
-           </font>
-          </property>
-          <item>
-           <property name="text">
-            <string>ALL</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>2.4 Ghz</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>5 Ghz</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_24xx">
-          <property name="font">
-           <font>
-            <pointsize>16</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>24xx Mhz</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="offset_24xx">
-          <property name="font">
-           <font>
-            <pointsize>16</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>0</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2" rowspan="2">
-         <widget class="QPushButton" name="btn_measure_loss">
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>measure loss</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_5xxx">
-          <property name="font">
-           <font>
-            <pointsize>16</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>5xxx Mhz</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="offset_5xxx">
-          <property name="font">
-           <font>
-            <pointsize>16</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>0</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0" colspan="3">
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QLabel" name="label_total_port">
-            <property name="font">
-             <font>
-              <pointsize>16</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>total port</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="cbo_total_port">
-            <item>
-             <property name="text">
-              <string>2 port</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4 port</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>8 port</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
+      <property name="text">
+       <string>REF</string>
+      </property>
      </item>
      <item>
-      <widget class="QGroupBox" name="gb_connection">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>313</width>
-         <height>310</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>800</width>
-         <height>400</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>16</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">
-border-image:url(&quot;:/connection_sketch/1-4.png&quot;);</string>
-       </property>
-       <property name="title">
-        <string>Connection sketch</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignBottom|Qt::AlignJustify</set>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-      </widget>
+      <property name="text">
+       <string>ANT1</string>
+      </property>
      </item>
-    </layout>
+     <item>
+      <property name="text">
+       <string>ANT2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ANT3</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ANT4</string>
+      </property>
+     </item>
+    </widget>
    </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item row="1" column="1" rowspan="2">
+    <widget class="QLabel" name="label_vsa">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>VSA(in)</string>
+     </property>
+     <property name="indent">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" rowspan="2">
+    <widget class="QComboBox" name="vsa_port">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="font">
-          <font>
-           <pointsize>16</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>all result</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTableView" name="tableView">
-         <property name="minimumSize">
-          <size>
-           <width>400</width>
-           <height>300</height>
-          </size>
-         </property>
-         <attribute name="horizontalHeaderDefaultSectionSize">
-          <number>60</number>
-         </attribute>
-         <attribute name="horizontalHeaderStretchLastSection">
-          <bool>true</bool>
-         </attribute>
-         <attribute name="verticalHeaderStretchLastSection">
-          <bool>true</bool>
-         </attribute>
-        </widget>
-       </item>
-      </layout>
+      <property name="text">
+       <string>1</string>
+      </property>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QPushButton" name="btn_save_all_port_loss">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>save all result</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <property name="text">
+       <string>5</string>
+      </property>
      </item>
-    </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_vsg_2">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>ANT number</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QComboBox" name="vsg_port">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="3">
+    <widget class="QGroupBox" name="gb_connection">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>313</width>
+       <height>300</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>800</width>
+       <height>400</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>16</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">
+border-image:url(&quot;:/connection_sketch/1-4.png&quot;);</string>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignBottom|Qt::AlignJustify</set>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <zorder>gb_setting</zorder>
+     <zorder>gb_setting</zorder>
+     <zorder>gb_setting</zorder>
+    </widget>
+   </item>
+   <item row="0" column="3" rowspan="5">
+    <widget class="QTableView" name="tableView">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>60</number>
+     </attribute>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="verticalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="3">
+    <widget class="QGroupBox" name="gb_setting">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>661</width>
+       <height>362</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>800</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">#gb_setting{
+        border-image:url(:/connection_sketch/setting_pic.png)}</string>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <widget class="QComboBox" name="band_select">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>75</y>
+        <width>113</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>113</width>
+        <height>41</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <item>
+       <property name="text">
+        <string>ALL</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2.4 Ghz</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>5 Ghz</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLineEdit" name="ip_destination">
+      <property name="geometry">
+       <rect>
+        <x>215</x>
+        <y>75</y>
+        <width>221</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>131</width>
+        <height>41</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>999</width>
+        <height>999</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>192.168.206.96</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cbo_total_port">
+      <property name="geometry">
+       <rect>
+        <x>215</x>
+        <y>178</y>
+        <width>73</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>41</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <item>
+       <property name="text">
+        <string>2 port</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4 port</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8 port</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLineEdit" name="offset_24xx">
+      <property name="geometry">
+       <rect>
+        <x>215</x>
+        <y>265</y>
+        <width>91</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="offset_5xxx">
+      <property name="geometry">
+       <rect>
+        <x>318</x>
+        <y>265</y>
+        <width>91</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_save_all_port_loss">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>228</y>
+        <width>115</width>
+        <height>75</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>115</width>
+        <height>75</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>save
+result</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_measure_loss">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>123</y>
+        <width>115</width>
+        <height>98</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>115</width>
+        <height>98</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>measure
+loss</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cbo_total_port_2">
+      <property name="geometry">
+       <rect>
+        <x>215</x>
+        <y>126</y>
+        <width>221</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>41</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <item>
+       <property name="text">
+        <string>2 port</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4 port</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8 port</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QCheckBox" name="checkBox">
+      <property name="geometry">
+       <rect>
+        <x>95</x>
+        <y>84</y>
+        <width>21</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
