@@ -12,12 +12,22 @@ Widget::Widget(QWidget *parent) :
     p1p5 (QStringList() << "port 1"<< "port 5"),
     p2_to_p4 (QStringList() << "port 2" << "port 3" << "port 4"),
     p6_to_p8 (QStringList() << "port 6" << "port 7" << "port 8"),
+    p2_option(QStringList() << "REF Cable 1-2" << "Port2 (ANT1)" << "Port2 (ANT2)" << "Port2 (ANT3)" << "Port2 (ANT4)"),
+    p4_option(QStringList()   << "REF Cable 1-2" << "Port2 (ANT1)" << "Port2 (ANT2)" << "Port2 (ANT3)" << "Port2 (ANT4)"
+                              << "REF Cable 1-3" << "Port3 (ANT1)" << "Port3 (ANT2)" << "Port3 (ANT3)" << "Port3 (ANT4)"
+                              << "REF Cable 1-4" << "Port4 (ANT1)" << "Port4 (ANT2)" << "Port4 (ANT3)" << "Port4 (ANT4)"),
+    p8_option(QStringList()   << "REF Cable 1-2" << "Port2 (ANT1)" << "Port2 (ANT2)" << "Port2 (ANT3)" << "Port2 (ANT4)"
+                              << "REF Cable 1-3" << "Port3 (ANT1)" << "Port3 (ANT2)" << "Port3 (ANT3)" << "Port3 (ANT4)"
+                              << "REF Cable 1-4" << "Port4 (ANT1)" << "Port4 (ANT2)" << "Port4 (ANT3)" << "Port4 (ANT4)"
+                              << "REF Cable 5-6" << "Port6 (ANT1)" << "Port6 (ANT2)" << "Port6 (ANT3)" << "Port6 (ANT4)"
+                              << "REF Cable 5-7" << "Port7 (ANT1)" << "Port7 (ANT2)" << "Port7 (ANT3)" << "Port7 (ANT4)"
+                              << "REF Cable 5-8" << "Port8 (ANT1)" << "Port8 (ANT2)" << "Port8 (ANT3)" << "Port8 (ANT4)"),
     measure_24xxMhz(true),
     measure_5xxxMhz(true),
     end_init(false)
 {
     ui->setupUi(this);
-
+    retrieve_ip();
 //    ui->gb_setting->setStyleSheet(#gb_setting{
 //        "border-image:url(\":/connection_sketch/setting_pic.png\")"});
     //get idx for recording data start point idx
@@ -46,6 +56,8 @@ Widget::Widget(QWidget *parent) :
     ui->vsa_port->setModel(vsa_model);
     vsg_model = new QStringListModel(this);
     ui->vsg_port->setModel(vsg_model);
+    port_option_model = new QStringListModel(this);
+    ui->cbo_port_option->setModel(port_option_model);
 
     ui->cbo_total_port->setItemData( 0, 2);
     ui->cbo_total_port->setItemData( 1, 4);
@@ -54,7 +66,8 @@ Widget::Widget(QWidget *parent) :
 
     //tcpSocket->abort();
     tcpSocket = new QTcpSocket(this);
-    tcpSocket->connectToHost( ui->ip_destination->text().toAscii().data(), 5499);
+    machine_ip = ui->ip_destination->text().toAscii().data();
+    tcpSocket->connectToHost(machine_ip, 5499);
 
     connected = tcpSocket->waitForConnected(1000);
     //connect through tcp wait for 1sec
@@ -86,36 +99,22 @@ Widget::Widget(QWidget *parent) :
             ui->cbo_total_port->setCurrentIndex(2);
 //            vsa_port = 5;
 //            vsg_port = 8;
+//            ui->cbo_port_option->setModel();
+            port_option_model->setStringList(p8_option);
         }
         //tcpSocket->close();
     }
     else {
         port_cnt = 4;
-		vsa_model->setStringList(p1);
+        vsa_model->setStringList(p1);
         ui->vsa_port->setItemData(0,1);
-		vsg_model->setStringList(p2_to_p4);
+        vsg_model->setStringList(p2_to_p4);
+        port_option_model->setStringList(p4_option);
         connect_fail_msg(QString("Can't connect to machine. "),1500);
     }
 
-    //second combobox depend on first combobox
-//    vsg_model = new QStringListModel(this);
-//    ui->vsg_port->setModel(vsg_model);
-//    vsg_model->setStringList(p2_to_p4);
-
     ui->vsa_port->setCurrentIndex(0);
-    qDebug()<<"in to click.";
-//    ui->vsg_port->setCurrentIndex(2);
-    //////////////////////////////////////////////////
 
-    //set the input constraint to fit ip format
-    QString ipRange = "(?:[1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
-    QRegExp ipRegex ("^" + ipRange
-                     + "\\." + ipRange
-                     + "\\." + ipRange
-                     + "\\." + ipRange + "$");
-    QRegExpValidator *ipValidator = new QRegExpValidator(ipRegex, this);
-    ui->ip_destination->setValidator(ipValidator);
-    //////////////////////////////////////////////////
 
     //initiate table model
         tableModel = new StandardTable(_countof(Measure_Channel), 6*port_cnt, this);
@@ -414,12 +413,6 @@ void Widget::on_btn_measure_loss_clicked()
                 real_loss.push_back(tmp_rlt);
             }
         }
-//        for(int i = 0; i < _countof(loss_24xx); ++i){
-           // interpolation_loss();
-//        }
-
-//    for(int i = 0; i<100;i++)
-//        qDebug()<<inter_polation_24xx[i];
 
         QByteArray end_loss_test_cmd[4]={
             "CONFigure:TRIGger:TYPE IMMediate\r\n",
@@ -436,22 +429,21 @@ void Widget::on_btn_measure_loss_clicked()
         }
         calc();
 //        write_to_table_view();
+
+        //record ip address in text
+        QFile ip_record_file("./machine_ip_record.txt");
+        if(ip_record_file.open(QIODevice::WriteOnly | QIODevice::Text)){
+            QTextStream out(&ip_record_file);
+            out << machine_ip;
+            ip_record_file.close();
+        }
     }
     else{
         connect_fail_msg(QString("Can't connect to machine. "),1500);
     }
 }
 
-void Widget::interpolation_loss(){
-    if(measure_24xxMhz){
-        for(int i = 0; i < 10; ++i){
-            float span = (loss_24xx[i+1].toFloat() - loss_24xx[i].toFloat()) / 10;
-            for(int idx = 0; idx < 10; ++idx){
-                inter_polation_24xx[i*10+idx] = loss_24xx[i].toFloat() + (idx) * span;
-            }
-        }
-    }
-}
+
 
 void Widget::write_to_table_view(){
 
@@ -469,15 +461,15 @@ void Widget::connect_fail_msg(QString &str, int msec){
 
 void Widget::on_vsa_port_currentIndexChanged(int index)
 {
-    if(index == 0){
-        vsg_model->setStringList(p2_to_p4);
-    }
-    else
-        vsg_model->setStringList(p6_to_p8);
+//    if(index == 0){
+//        vsg_model->setStringList(p2_to_p4);
+//    }
+//    else
+//        vsg_model->setStringList(p6_to_p8);
 
-    vsa_port = index * 4 + 1;
-    qDebug()<< "vsa" << vsa_port;
-    ui->vsg_port->setCurrentIndex(2);
+//    vsa_port = index * 4 + 1;
+//    qDebug()<< "vsa" << vsa_port;
+//    ui->vsg_port->setCurrentIndex(2);
 }
 
 void::Widget::scroll_to_specified(){
@@ -492,9 +484,9 @@ void::Widget::scroll_to_specified(){
 
 void Widget::on_vsg_port_currentIndexChanged(int index)
 {
-    vsg_port = vsa_port + 1 + ui->vsg_port->currentIndex();
-    change_sketch();
-    scroll_to_specified();
+//    vsg_port = vsa_port + 1 + ui->vsg_port->currentIndex();
+//    change_sketch();
+//    scroll_to_specified();
 }
 
 void Widget::on_ANT_num_currentIndexChanged(int index)
@@ -515,6 +507,7 @@ void Widget::on_cbo_total_port_currentIndexChanged(int index)
         ui->vsg_port->setCurrentIndex(0);
         ui->vsa_port->setDisabled(true);
         ui->vsg_port->setDisabled(true);
+        port_option_model->setStringList(p2_option);
         break;
     case 4:
         vsa_model->setStringList(p1);
@@ -523,6 +516,7 @@ void Widget::on_cbo_total_port_currentIndexChanged(int index)
         ui->vsa_port->setCurrentIndex(0);
         ui->vsa_port->setDisabled(false);
         ui->vsg_port->setDisabled(false);
+        port_option_model->setStringList(p4_option);
         break;
     case 8:
         vsa_model->setStringList(p1p5);
@@ -530,6 +524,7 @@ void Widget::on_cbo_total_port_currentIndexChanged(int index)
         ui->vsa_port->setCurrentIndex(0);
         ui->vsa_port->setDisabled(false);
         ui->vsg_port->setDisabled(false);
+        port_option_model->setStringList(p8_option);
         break;
 
     }
@@ -679,4 +674,57 @@ void Widget::on_band_select_currentIndexChanged(int index)
         measure_5xxxMhz = true;
         break;
     }
+}
+
+
+void Widget::on_cbo_port_option_currentIndexChanged(QString str)
+{
+    QStringList rlt = str.split(" ");
+    qDebug()<<rlt;
+    if(rlt.size() == 3){
+        QStringList port = rlt.at(2).split("-");
+        vsa_port = port[0].toInt();
+        vsg_port = port[1].toInt();
+        ant_port = 0;
+    }
+    else if(rlt.size() == 2){
+            vsg_port = rlt[0].remove("Port").toInt();
+            ant_port = rlt[1].remove("(ANT").remove(")").toInt();
+    }
+    change_sketch();
+    scroll_to_specified();
+}
+
+void Widget::retrieve_ip(){
+    QFile ip_record_file("./machine_ip_record.txt");
+    if(ip_record_file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        QTextStream in(&ip_record_file);
+        QStringList ip = in.readAll().split("\n");
+
+        machine_ip_model = new QStringListModel(this);
+        ui->cbo_ip_destination->setModel(machine_ip_model);
+        machine_ip_model->setStringList(ip);
+
+        qDebug()<<"ip = "<<ip;
+        ip_record_file.close();
+
+        ui->cbo_ip_destination->setEditable(true);
+        //set the input constraint to fit ip format
+        QString ipRange = "(?:[1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
+        QRegExp ipRegex ("^" + ipRange
+                         + "\\." + ipRange
+                         + "\\." + ipRange
+                         + "\\." + ipRange + "$");
+        QRegExpValidator *ipValidator = new QRegExpValidator(ipRegex, this);
+        ui->cbo_ip_destination->setValidator(ipValidator);
+        //////////////////////////////////////////////////
+
+    }
+}
+
+void Widget::on_checkBox_clicked(bool checked)
+{
+    if(!checked)
+        machine_ip = "127.0.0.1";
+
 }

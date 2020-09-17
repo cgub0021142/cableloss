@@ -57,10 +57,16 @@ private:
 
     QStringListModel *vsa_model;
     QStringListModel *vsg_model;
+    QStringListModel *port_option_model;
+    QStringListModel *machine_ip_model;
     QStringList p1;
     QStringList p1p5;
     QStringList p2_to_p4;
     QStringList p6_to_p8;
+    QStringList p2_option;
+    QStringList p4_option;
+    QStringList p8_option;
+
 
 //    QStandardItemModel *tableModel;
     StandardTable *tableModel;
@@ -69,6 +75,7 @@ private:
     void connect_fail_msg(QString &str, int msec = 3000);
     bool end_init;
 
+    char *machine_ip;
     int band_24g_start_idx;
     int band_24g_end_idx;
     int band_5g_start_idx;
@@ -84,7 +91,6 @@ private:
     QVector<tbloss_data> loss_ref;
     float inter_polation_24xx[100];
     QString inter_polation_5xxx[1000];
-    void interpolation_loss();
     void write_to_table_view();
     void change_sketch();
     double interpolation(double f0, double p0, double f1, double p1, double fi);
@@ -92,10 +98,14 @@ private:
     QVector <double> final_data;
     void scroll_to_specified();
     QVector <bool> check_measured_ref;
+    void retrieve_ip();
+
 
 
 
 private slots:
+    void on_checkBox_clicked(bool checked);
+    void on_cbo_port_option_currentIndexChanged(QString );
     void on_band_select_currentIndexChanged(int index);
     void on_cbo_total_port_currentIndexChanged(int index);
     void on_ANT_num_currentIndexChanged(int index);
