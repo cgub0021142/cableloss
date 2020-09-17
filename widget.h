@@ -91,7 +91,6 @@ private:
     QVector<tbloss_data> loss_ref;
     float inter_polation_24xx[100];
     QString inter_polation_5xxx[1000];
-    void write_to_table_view();
     void change_sketch();
     double interpolation(double f0, double p0, double f1, double p1, double fi);
     void calc();
@@ -109,8 +108,6 @@ private slots:
     void on_band_select_currentIndexChanged(int index);
     void on_cbo_total_port_currentIndexChanged(int index);
     void on_ANT_num_currentIndexChanged(int index);
-//    void on_vsg_port_currentIndexChanged(int index);
-//    void on_vsa_port_currentIndexChanged(int index);
     void on_btn_measure_loss_clicked();
     void on_btn_save_all_port_loss_clicked();
 };

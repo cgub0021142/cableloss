@@ -50,13 +50,8 @@ Widget::Widget(QWidget *parent) :
         }
     }
     //////////////////////////////////////////////////////////////////////////////////////////////
-//    vsa_model = new QStringListModel(this);
-//    ui->vsa_port->setModel(vsa_model);
-//    vsg_model = new QStringListModel(this);
-//    ui->vsg_port->setModel(vsg_model);
     port_option_model = new QStringListModel(this);
     ui->cbo_port_option->setModel(port_option_model);
-
     ui->cbo_total_port->setItemData( 0, 2);
     ui->cbo_total_port->setItemData( 1, 4);
     ui->cbo_total_port->setItemData( 2, 8);
@@ -64,59 +59,45 @@ Widget::Widget(QWidget *parent) :
 
     //tcpSocket->abort();
     tcpSocket = new QTcpSocket(this);
-//    machine_ip = ui->ip_destination->text().toAscii().data();
     machine_ip = ui->cbo_ip_destination->currentText();
     tcpSocket->connectToHost(machine_ip, 5499);
 
     connected = tcpSocket->waitForConnected(1000);
     //connect through tcp wait for 1sec
     if( connected){
+		//get total port
         tcpSocket->write("ROUTe:PORTs?\r\n");
         tcpSocket->waitForBytesWritten(100);
         tcpSocket->waitForReadyRead();
-
         QString str(tcpSocket->readAll());
         str.remove('\n');
         port_cnt = str.mid(2).toInt();
 
-//        if(port_cnt == 2 || port_cnt == 4 || port_cnt == 8){
-//            get_port_num_on_start = true;
-//        }
-
-//        if(get_port_num_on_start){
-//            ui->label_total_port->setEnabled(false);
-//            ui->cbo_total_port->setEnabled(false);
-//        }
 
         //init port setting
-        if(port_cnt == 8){
-
-//            vsa_model = new QStringListModel(this);
-//            ui->vsa_port->setModel(vsa_model);
-            //vsa_model->setStringList(p1p5);
-			
-            ui->cbo_total_port->setCurrentIndex(2);
-//            vsa_port = 5;
-//            vsg_port = 8;
-//            ui->cbo_port_option->setModel();
+        if(port_cnt == 8){			
             port_option_model->setStringList(p8_option);
-        }
+			ui->cbo_total_port->setCurrentIndex(2);
+			ui->cbo_port_option->setCurrentIndex(10);
+        } else if(port_cnt == 4){
+            port_option_model->setStringList(p4_option);
+			ui->cbo_total_port->setCurrentIndex(1);
+			ui->cbo_port_option->setCurrentIndex(10);
+		} else if(port_cnt == 2){
+	        port_option_model->setStringList(p2_option);
+			ui->cbo_total_port->setCurrentIndex(0);
+			ui->cbo_port_option->setCurrentIndex(0);
+		}
         //tcpSocket->close();
     }
     else {
         port_cnt = 4;
-//        vsa_model->setStringList(p1);
-//        ui->vsa_port->setItemData(0,1);
-//        vsg_model->setStringList(p2_to_p4);
-//        port_option_model->setStringList(p4_option);
         ui->cbo_total_port->setCurrentIndex(1);
+		port_option_model->setStringList(p4_option);
         ui->cbo_port_option->setCurrentIndex(10);
 
         connect_fail_msg(QString("Can't connect to machine. "),1500);
     }
-
-    //ui->vsa_port->setCurrentIndex(0);
-
 
     //initiate table model
         tableModel = new StandardTable(_countof(Measure_Channel), 6*port_cnt, this);
@@ -140,13 +121,11 @@ Widget::Widget(QWidget *parent) :
                          << "ANT3"
                          << "ANT4" ;
         ui->tableView->setSpan(0 , 6 * i + 1, 1, 5);
-//        tableModel->setItem( 1, 6*i, new QStandardItem(QString("Port%1").arg(i+1)));
         QStandardItem *port_data = new QStandardItem(QString("Port%1").arg(i+1));
         port_data->setTextAlignment(Qt::AlignCenter);
         QFont *font_size = new QFont();
         font_size->setPixelSize(20);
         port_data->setFont(*font_size);
-        // port_data->setForeground();
         QBrush *background = new QBrush( QColor(200,200,200));
         port_data->setBackground(*background);
         tableModel->setItem( 0, 6*i + 1, port_data);
@@ -167,18 +146,6 @@ Widget::Widget(QWidget *parent) :
     for(int port=0; port<port_cnt; port++){
         QSettings *file = new QSettings( dir+QString::number(port+1)+extension,QSettings::IniFormat);
         QStringList allKey = file->allKeys();
-
-//        //save data in model (self-defined) private member
-//        foreach(QString str, allKey){
-//            //tableModel->loss_data.insert(str,file->value(str,999.999).toFloat());
-//            tableModel->loss_data[port].insert(str,file->value(str,99.99).toFloat());
-//        }
-
-//        foreach(QString str, allKey){
-//            qDebug() <<port <<" "<<
-//                    str<< " "<< tableModel->loss_data[port].value(str,99.99);
-//        }
-
         //從上到下把資料填入表格，填入ANT1~ANT4就好
         for( int col = 2; col < 6; col++){//1~6
 
@@ -193,16 +160,12 @@ Widget::Widget(QWidget *parent) :
     //combine to view and set cell width
     ui->tableView->setModel(tableModel);
     check_measured_ref = QVector<bool>(32,false);
-//    check_measured_ref.resize(32);
     end_init = true;
 }
 
-Widget::~Widget()
-{
+Widget::~Widget(){
     delete ui;
 }
-
-
 
 void Widget::change_sketch(){
     QString pic_name;
@@ -282,12 +245,12 @@ void Widget::on_btn_save_all_port_loss_clicked()
 
 void Widget::on_btn_measure_loss_clicked()
 {
-    //if()
+
+
     tcpSocket->abort();
-	if(ui->use_localhost->checkState())
-		machine_ip = ui->cbo_ip_destination->currentText();
+    if(ui->use_localhost->isChecked())
+        machine_ip = ui->cbo_ip_destination->currentText();
     tcpSocket->connectToHost(machine_ip, 5499);
-	qDebug()<<machine_ip;
     connected = tcpSocket->waitForConnected(1000);
 
     if(connected){
@@ -338,13 +301,6 @@ void Widget::on_btn_measure_loss_clicked()
             tcpSocket->waitForReadyRead();
             tcpSocket->readAll();
         }
-
-//        //get port
-//        int cbo_vsa_index = ui->vsa_port->currentIndex();
-//        vsa_port = cbo_vsa_index * 4 + 1;
-//        vsg_port = vsa_port + ui->vsg_port->currentIndex() + 1;
-
-
 
         QByteArray port_setting [4]= {
             "ROUTe:PORT:RESource RF",
@@ -433,25 +389,20 @@ void Widget::on_btn_measure_loss_clicked()
             tcpSocket->readAll();
         }
         calc();
-//        write_to_table_view();
 
         //record ip address in text
-        QFile ip_record_file("./machine_ip_record.txt");
-        if(ip_record_file.open(QIODevice::WriteOnly | QIODevice::Text)){
-            QTextStream out(&ip_record_file);
-            out << machine_ip;
-            ip_record_file.close();
+        if(ui->use_localhost->isChecked()){
+            QFile ip_record_file("./machine_ip_record.txt");
+            if(ip_record_file.open(QIODevice::WriteOnly | QIODevice::Text)){
+                QTextStream out(&ip_record_file);
+                out << machine_ip;
+                ip_record_file.close();
+            }
         }
     }
     else{
         connect_fail_msg(QString("Can't connect to machine. "),1500);
     }
-}
-
-
-
-void Widget::write_to_table_view(){
-
 }
 
 void Widget::connect_fail_msg(QString &str, int msec){
@@ -463,20 +414,6 @@ void Widget::connect_fail_msg(QString &str, int msec){
     msg_box.exec();
 }
 
-
-//void Widget::on_vsa_port_currentIndexChanged(int index)
-//{
-//    if(index == 0){
-//        vsg_model->setStringList(p2_to_p4);
-//    }
-//    else
-//        vsg_model->setStringList(p6_to_p8);
-
-//    vsa_port = index * 4 + 1;
-//    qDebug()<< "vsa" << vsa_port;
-//    ui->vsg_port->setCurrentIndex(2);
-//}
-
 void::Widget::scroll_to_specified(){
     if(end_init){
         QModelIndex top_of_data = tableModel->index(0, vsg_port * 6 - 6 + ant_port + 1);
@@ -486,13 +423,6 @@ void::Widget::scroll_to_specified(){
         qDebug()<<ui->tableView->currentIndex();
     }
 }
-
-//void Widget::on_vsg_port_currentIndexChanged(int index)
-//{
-//    vsg_port = vsa_port + 1 + ui->vsg_port->currentIndex();
-//    change_sketch();
-//    scroll_to_specified();
-//}
 
 void Widget::on_ANT_num_currentIndexChanged(int index)
 {
@@ -507,36 +437,18 @@ void Widget::on_cbo_total_port_currentIndexChanged(int index)
     qDebug()<<"xxxport_cnt"<<port_cnt;
     switch(port_cnt){
     case 2:
-//        ui->vsa_port->setCurrentIndex(0);
-//        vsg_model->setStringList(p2_to_p4);
-//        ui->vsg_port->setCurrentIndex(0);
-//        ui->vsa_port->setDisabled(true);
-//        ui->vsg_port->setDisabled(true);
         port_option_model->setStringList(p2_option);
         ui->cbo_port_option->setCurrentIndex(0);
         break;
     case 4:
-//        vsa_model->setStringList(p1);
-//        vsg_model->setStringList(p2_to_p4);
-
-//        ui->vsa_port->setCurrentIndex(0);
-//        ui->vsa_port->setDisabled(false);
-//        ui->vsg_port->setDisabled(false);
         port_option_model->setStringList(p4_option);
         ui->cbo_port_option->setCurrentIndex(10);
         break;
     case 8:
-//        vsa_model->setStringList(p1p5);
-//        vsg_model->setStringList(p6_to_p8);
-//        ui->vsa_port->setCurrentIndex(0);
-//        ui->vsa_port->setDisabled(false);
-//        ui->vsg_port->setDisabled(false);
         port_option_model->setStringList(p8_option);
-        ui->cbo_port_option->setCurrentIndex(25);
+        ui->cbo_port_option->setCurrentIndex(10);
         break;
-
     }
-
 }
 
 double Widget::interpolation( double f0, double p0, double f1, double p1, double fi)
@@ -547,20 +459,17 @@ double Widget::interpolation( double f0, double p0, double f1, double p1, double
         pi = ((fi-f0)/(f1-f0))*(p1-p0) + p0;
         if((f1-f0) == 0)
         {
-                pi = p0;
+            pi = p0;
         }
         pi = fabs(pi);
         return pi ;
 }
 
 //calc all interpolation data and write on table
-//void Widget::ScanLossTbl(vector< tbloss_data > vec_Data , const std::string& filename, const std::string& MeaChannelstr, const std::string& Offset24g, const std::string& Offset5g)
 void Widget::calc()
 {
-
         double pi , f0 , f1 , p0 , p1;
         pi = f0 = f1 = p0 = p1 = 0.0;
-
 
         //////////////////count the quantity of the interpolated loss_data and init with offset///////////////////////
         int measure_idx = band_24g_start_idx;
@@ -606,45 +515,35 @@ void Widget::calc()
         }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //interpolation
-            for(int ref_idx =0, rlt_idx = 0; ref_idx< loss_ant.size() -1,
+        for(int ref_idx =0, rlt_idx = 0; ref_idx< loss_ant.size() -1,
 
-                measure_idx < measure_end_idx; ++measure_idx )
+            measure_idx < measure_end_idx; ++measure_idx )
+        {
+
+            f0 = real_loss[ref_idx].Freq;
+
+            f1 = real_loss[ref_idx + 1].Freq;
+
+            int Freq = Measure_Channel[measure_idx];
+
+            if( Freq >= f0 && Freq <= f1 )
             {
+                    p0 = real_loss[ref_idx].Loss;
 
-                f0 = real_loss[ref_idx].Freq;
-
-                f1 = real_loss[ref_idx + 1].Freq;
-
-                int Freq = Measure_Channel[measure_idx];
-
-                if( Freq >= f0 && Freq <= f1 )
-                {
-                        p0 = real_loss[ref_idx].Loss;
-
-                        p1 = real_loss[ref_idx + 1].Loss;
-						double tmp_debug = interpolation( f0, p0, f1, p1,  Freq );
-                        final_data[rlt_idx++] +=  tmp_debug;
-						qDebug()<<rlt_idx<<","<<tmp_debug;
-                }
-                else if(Freq > f1){
-                        ref_idx++;
-                        --measure_idx;
-                }
-                else if( Freq < f0){
-//                        d.Loss = 0;
-//                        vec_FinData.push_back(d);
-                }
-
-        }
+                    p1 = real_loss[ref_idx + 1].Loss;
+                    double tmp_debug = interpolation( f0, p0, f1, p1,  Freq );
+                    final_data[rlt_idx++] +=  tmp_debug;
+                    qDebug()<<rlt_idx<<","<<tmp_debug;
+            }
+            else if(Freq > f1){
+                    ref_idx++;
+                    --measure_idx;
+            }
+    }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //write to table
-//        QStandardItem* loss = new QStandardItem(file->value(key).toString());
-//        tableModel->setItem(row+1, (port)*6 + col, loss);
 
         QVectorIterator<double> iter(final_data);
-        //for(iter = final_data.begin(); iter !=final_data.end();++iter){
         int row;
-        //int col = vsg_port *6 + ant_port + 1;
         int col = (vsg_port - 1) * 6 + ant_port + 1;
 		int ref_col = (vsg_port - 1) * 6 + 1;
         if(measure_24xxMhz){
@@ -710,13 +609,7 @@ void Widget::on_cbo_port_option_currentIndexChanged(QString str)
             ant_port = rlt[1].remove("(ANT").remove(")").toInt();
     }
 
-    //record ip address in text
-    QFile ip_record_file("./machine_ip_record.txt");
-    if(ip_record_file.open(QIODevice::WriteOnly | QIODevice::Text)){
-        QTextStream out(&ip_record_file);
-        out << machine_ip;
-        ip_record_file.close();
-    }
+
 
     change_sketch();
     scroll_to_specified();
