@@ -45,6 +45,8 @@ class Widget : public QWidget
 public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
+	void timerEvent ( QTimerEvent* event );
+
 
 
 private:
@@ -53,6 +55,7 @@ private:
     int port_cnt;
     bool connected;
     bool get_port_num_on_start;
+	int timer_idx1;
 
 
     QStringListModel *vsa_model;
@@ -98,6 +101,13 @@ private:
     void scroll_to_specified();
     QVector <bool> check_measured_ref;
     void retrieve_ip();
+
+    void get_loss_progress();
+    int total_measure_band;
+    int getloss_cnt;
+    double loss_progress;
+
+	void add_QtConcurrent_with_func();
 
 
 

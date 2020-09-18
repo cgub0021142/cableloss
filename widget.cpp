@@ -4,6 +4,9 @@
 #include <QMessageBox>
 #include <QPointF>
 #include <iostream>
+//#include <QtCore\qtconcurrentrun.h>
+#include <boost\thread.hpp>
+
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget),
@@ -24,9 +27,17 @@ Widget::Widget(QWidget *parent) :
                               << "REF Cable 5-8" << "Port8 (ANT1)" << "Port8 (ANT2)" << "Port8 (ANT3)" << "Port8 (ANT4)"),
     measure_24xxMhz(true),
     measure_5xxxMhz(true),
-    end_init(false)
+    end_init(false),
+	getloss_cnt(0)
 {
     ui->setupUi(this);
+	timer_idx1 = startTimer(80);
+
+
+
+
+    ui->progressBar->setFormat(QString("Get loss from machine:   %1%.").arg(0));
+    ui->progressBar->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     retrieve_ip();
     //get idx for recording data start point idx for further interpolation usage
     for( int idx = 0; idx < _countof(Measure_Channel); ++idx){
@@ -163,6 +174,17 @@ Widget::Widget(QWidget *parent) :
     end_init = true;
 }
 
+void Widget::timerEvent ( QTimerEvent* event ){
+
+	
+		if( event->timerId() == timer_idx1 ){
+			if(!getloss_cnt){
+				get_loss_progress();
+			}
+		}
+
+}
+
 Widget::~Widget(){
     delete ui;
 }
@@ -231,6 +253,7 @@ void Widget::on_btn_save_all_port_loss_clicked()
     }
 
 
+
     QMessageBox msg_box;
     msg_box.setWindowTitle(" ");
     msg_box.setText("<font size = 20 > save completed. </font>");
@@ -243,17 +266,28 @@ void Widget::on_btn_save_all_port_loss_clicked()
 
 }
 
-void Widget::on_btn_measure_loss_clicked()
-{
+void Widget::add_QtConcurrent_with_func(){
+		//QtConcurrent::run(this, &Widget::add_QtConcurrent_with_func);
 
-
-    tcpSocket->abort();
+	    tcpSocket->abort();
     if(ui->use_localhost->isChecked())
         machine_ip = ui->cbo_ip_destination->currentText();
     tcpSocket->connectToHost(machine_ip, 5499);
     connected = tcpSocket->waitForConnected(1000);
 
+    ui->gb_setting->setEnabled(false);
     if(connected){
+
+        //for progessbar usage
+        if(measure_24xxMhz && measure_5xxxMhz)
+            total_measure_band = 110;
+        else if(measure_24xxMhz && !measure_5xxxMhz)
+            total_measure_band = 10;
+        else if(!measure_24xxMhz && measure_5xxxMhz)
+            total_measure_band = 100;
+        ui->progressBar->setValue(0);
+
+
         //check port cnt is match from the gui if not match return
         tcpSocket->write("ROUTe:PORTs?\r\n");
         tcpSocket->waitForBytesWritten(100);
@@ -325,6 +359,7 @@ void Widget::on_btn_measure_loss_clicked()
         measure_cmd[2] = measure_cmd[2].arg(vsg_port);
         real_loss.clear();
         real_loss.reserve(120);
+        getloss_cnt = 0;
         if( measure_24xxMhz){
             for(int i = 2400, idx = 0; i < 2500; i += 10){
                 tcpSocket->write(measure_cmd[0].arg(i).toAscii());
@@ -347,6 +382,8 @@ void Widget::on_btn_measure_loss_clicked()
                 tmp_rlt.Freq = i;
                 tmp_rlt.Loss = loss.toFloat();
                 real_loss.push_back(tmp_rlt);
+                //get_loss_progress();
+                QtConcurrent::run(this,&Widget::get_loss_progress);
             }
         }
 
@@ -372,6 +409,9 @@ void Widget::on_btn_measure_loss_clicked()
                 tmp_rlt.Freq = i;
                 tmp_rlt.Loss = loss.toFloat();
                 real_loss.push_back(tmp_rlt);
+                //get_loss_progress();
+				QtConcurrent::run(this,&Widget::get_loss_progress);
+
             }
         }
 
@@ -399,10 +439,40 @@ void Widget::on_btn_measure_loss_clicked()
                 ip_record_file.close();
             }
         }
+
+		
+
     }
     else{
         connect_fail_msg(QString("Can't connect to machine. "),1500);
     }
+    ui->gb_setting->setEnabled(true);
+
+	getloss_cnt = 0;
+
+	}
+
+void Widget::on_btn_measure_loss_clicked()
+{
+	//boost::thread t( boost::bind( &Widget::add_QtConcurrent_with_func , this ) );
+	//t.join();
+	add_QtConcurrent_with_func();
+
+	//QtConcurrent::run(this, &Widget::get_loss_progress);
+
+
+
+}
+
+void Widget::get_loss_progress(){
+    ++getloss_cnt;
+    qDebug()<<"measure at"<<getloss_cnt;
+    qDebug()<<"total band"<<total_measure_band;
+    loss_progress = 100 *getloss_cnt / (double)total_measure_band;
+    qDebug()<< "loss" <<loss_progress;
+    ui->progressBar->setFormat(QString("Get loss from machine:   %1%.").arg(QString::number(loss_progress, 'f', 1)));
+    ui->progressBar->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
 }
 
 void Widget::connect_fail_msg(QString &str, int msec){
