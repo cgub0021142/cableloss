@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include <QPointF>
 #include <iostream>
-//#include <QtCore\qtconcurrentrun.h>
+#include <QtCore\qtconcurrentrun.h>
 #include <boost\thread.hpp>
 
 Widget::Widget(QWidget *parent) :
@@ -69,46 +69,46 @@ Widget::Widget(QWidget *parent) :
     ant_port = 0;
 
     //tcpSocket->abort();
-    tcpSocket = new QTcpSocket(this);
-    machine_ip = ui->cbo_ip_destination->currentText();
-    tcpSocket->connectToHost(machine_ip, 5499);
+    //tcpSocket = new QTcpSocket(this);
+    //machine_ip = ui->cbo_ip_destination->currentText();
+    //tcpSocket->connectToHost(machine_ip, 5499);
 
-    connected = tcpSocket->waitForConnected(1000);
+    //connected = tcpSocket->waitForConnected(1000);
     //connect through tcp wait for 1sec
-    if( connected){
-		//get total port
-        tcpSocket->write("ROUTe:PORTs?\r\n");
-        tcpSocket->waitForBytesWritten(100);
-        tcpSocket->waitForReadyRead();
-        QString str(tcpSocket->readAll());
-        str.remove('\n');
-        port_cnt = str.mid(2).toInt();
+  //  if( connected){
+		////get total port
+  //      tcpSocket->write("ROUTe:PORTs?\r\n");
+  //      tcpSocket->waitForBytesWritten(100);
+  //      tcpSocket->waitForReadyRead();
+  //      QString str(tcpSocket->readAll());
+  //      str.remove('\n');
+  //      port_cnt = str.mid(2).toInt();
 
 
-        //init port setting
-        if(port_cnt == 8){			
-            port_option_model->setStringList(p8_option);
-			ui->cbo_total_port->setCurrentIndex(2);
-			ui->cbo_port_option->setCurrentIndex(10);
-        } else if(port_cnt == 4){
-            port_option_model->setStringList(p4_option);
-			ui->cbo_total_port->setCurrentIndex(1);
-			ui->cbo_port_option->setCurrentIndex(10);
-		} else if(port_cnt == 2){
-	        port_option_model->setStringList(p2_option);
-			ui->cbo_total_port->setCurrentIndex(0);
-			ui->cbo_port_option->setCurrentIndex(0);
-		}
-        //tcpSocket->close();
-    }
-    else {
+  //      //init port setting
+  //      if(port_cnt == 8){			
+  //          port_option_model->setStringList(p8_option);
+		//	ui->cbo_total_port->setCurrentIndex(2);
+		//	ui->cbo_port_option->setCurrentIndex(10);
+  //      } else if(port_cnt == 4){
+  //          port_option_model->setStringList(p4_option);
+		//	ui->cbo_total_port->setCurrentIndex(1);
+		//	ui->cbo_port_option->setCurrentIndex(10);
+		//} else if(port_cnt == 2){
+	 //       port_option_model->setStringList(p2_option);
+		//	ui->cbo_total_port->setCurrentIndex(0);
+		//	ui->cbo_port_option->setCurrentIndex(0);
+		//}
+  //      //tcpSocket->close();
+  //  }
+  //  else {
         port_cnt = 4;
         ui->cbo_total_port->setCurrentIndex(1);
 		port_option_model->setStringList(p4_option);
         ui->cbo_port_option->setCurrentIndex(10);
 
         connect_fail_msg(QString("Can't connect to machine. "),1500);
-    }
+    //}
 
     //initiate table model
         tableModel = new StandardTable(_countof(Measure_Channel), 6*port_cnt, this);
@@ -174,16 +174,16 @@ Widget::Widget(QWidget *parent) :
     end_init = true;
 }
 
-void Widget::timerEvent ( QTimerEvent* event ){
-
-	
-		if( event->timerId() == timer_idx1 ){
-			if(!getloss_cnt){
-				get_loss_progress();
-			}
-		}
-
-}
+//void Widget::timerEvent ( QTimerEvent* event ){
+//
+//	
+//		if( event->timerId() == timer_idx1 ){
+//			if(getloss_cnt){
+//				get_loss_progress();
+//			}
+//		}
+//
+//}
 
 Widget::~Widget(){
     delete ui;
@@ -267,15 +267,24 @@ void Widget::on_btn_save_all_port_loss_clicked()
 }
 
 void Widget::add_QtConcurrent_with_func(){
-		//QtConcurrent::run(this, &Widget::add_QtConcurrent_with_func);
+		//QtConcurrent::run(this, &Widget::add_QtConcurrent_with_func);.
 
-	    tcpSocket->abort();
-    if(ui->use_localhost->isChecked())
-        machine_ip = ui->cbo_ip_destination->currentText();
+
+
+	QTcpSocket *tcpSocket = new QTcpSocket(this);
+    machine_ip = ui->cbo_ip_destination->currentText();
+    tcpSocket->connectToHost(machine_ip, 5499);
+
+    connected = tcpSocket->waitForConnected(1000);
+
+
+
+    //if(ui->use_localhost->isChecked())
+    //    machine_ip = ui->cbo_ip_destination->currentText();
     tcpSocket->connectToHost(machine_ip, 5499);
     connected = tcpSocket->waitForConnected(1000);
 
-    ui->gb_setting->setEnabled(false);
+    //ui->gb_setting->setEnabled(false);
     if(connected){
 
         //for progessbar usage
@@ -285,7 +294,7 @@ void Widget::add_QtConcurrent_with_func(){
             total_measure_band = 10;
         else if(!measure_24xxMhz && measure_5xxxMhz)
             total_measure_band = 100;
-        ui->progressBar->setValue(0);
+        //ui->progressBar->setValue(0);
 
 
         //check port cnt is match from the gui if not match return
@@ -296,10 +305,10 @@ void Widget::add_QtConcurrent_with_func(){
         QString str(tcpSocket->readAll());
         str.remove('\n');
         int port_cnt_from_machine = str.mid(2).toInt();
-        if(port_cnt != port_cnt_from_machine){
-            connect_fail_msg(QString("Total port setting in gui is wrong should change to %1port.").arg(port_cnt_from_machine),30000);
-            return;
-        }
+        //if(port_cnt != port_cnt_from_machine){
+        //    connect_fail_msg(QString("Total port setting in gui is wrong should change to %1port.").arg(port_cnt_from_machine),30000);
+        //    return;
+        //}
 
         //check if ref is measured before measure the ant cable loss
         if(ant_port){
@@ -362,6 +371,7 @@ void Widget::add_QtConcurrent_with_func(){
         getloss_cnt = 0;
         if( measure_24xxMhz){
             for(int i = 2400, idx = 0; i < 2500; i += 10){
+				//++getloss_cnt;
                 tcpSocket->write(measure_cmd[0].arg(i).toAscii());
                 tcpSocket->waitForBytesWritten();
                 tcpSocket->waitForReadyRead();
@@ -382,8 +392,8 @@ void Widget::add_QtConcurrent_with_func(){
                 tmp_rlt.Freq = i;
                 tmp_rlt.Loss = loss.toFloat();
                 real_loss.push_back(tmp_rlt);
-                //get_loss_progress();
-                QtConcurrent::run(this,&Widget::get_loss_progress);
+                get_loss_progress();
+                //QtConcurrent::run(this,&Widget::get_loss_progress);
             }
         }
 
@@ -409,8 +419,8 @@ void Widget::add_QtConcurrent_with_func(){
                 tmp_rlt.Freq = i;
                 tmp_rlt.Loss = loss.toFloat();
                 real_loss.push_back(tmp_rlt);
-                //get_loss_progress();
-				QtConcurrent::run(this,&Widget::get_loss_progress);
+                get_loss_progress();
+				//QtConcurrent::run(this,&Widget::get_loss_progress);
 
             }
         }
@@ -454,9 +464,10 @@ void Widget::add_QtConcurrent_with_func(){
 
 void Widget::on_btn_measure_loss_clicked()
 {
-	//boost::thread t( boost::bind( &Widget::add_QtConcurrent_with_func , this ) );
-	//t.join();
-	add_QtConcurrent_with_func();
+	////boost::thread t( boost::bind( &Widget::add_QtConcurrent_with_func , this ) );
+	////t.join();
+	//add_QtConcurrent_with_func();
+		QtConcurrent::run(this, &Widget::add_QtConcurrent_with_func);
 
 	//QtConcurrent::run(this, &Widget::get_loss_progress);
 
@@ -465,14 +476,17 @@ void Widget::on_btn_measure_loss_clicked()
 }
 
 void Widget::get_loss_progress(){
+	QMutex mutex;
+	mutex.lock();
     ++getloss_cnt;
     qDebug()<<"measure at"<<getloss_cnt;
     qDebug()<<"total band"<<total_measure_band;
     loss_progress = 100 *getloss_cnt / (double)total_measure_band;
     qDebug()<< "loss" <<loss_progress;
     ui->progressBar->setFormat(QString("Get loss from machine:   %1%.").arg(QString::number(loss_progress, 'f', 1)));
+	//ui->progressBar->setValue(loss_progress);
     ui->progressBar->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-
+	mutex.unlock();
 }
 
 void Widget::connect_fail_msg(QString &str, int msec){

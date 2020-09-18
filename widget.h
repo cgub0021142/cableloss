@@ -45,13 +45,13 @@ class Widget : public QWidget
 public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
-	void timerEvent ( QTimerEvent* event );
+	//void timerEvent ( QTimerEvent* event );
 
 
 
 private:
     Ui::Widget *ui;
-    QTcpSocket *tcpSocket;
+    //QTcpSocket *tcpSocket;
     int port_cnt;
     bool connected;
     bool get_port_num_on_start;
