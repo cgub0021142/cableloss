@@ -45,7 +45,7 @@ class Widget : public QWidget
 public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
-	//void timerEvent ( QTimerEvent* event );
+	void timerEvent ( QTimerEvent* event );
 
 
 
@@ -84,6 +84,7 @@ private:
     int band_5g_start_idx;
     int vsa_port;
     int vsg_port;
+	int vsg_port_for_table_display;
     int ant_port;
     bool measure_24xxMhz;
     bool measure_5xxxMhz;
@@ -107,7 +108,11 @@ private:
     int getloss_cnt;
     double loss_progress;
 
+	bool enable_gb_setting;
+
 	void add_QtConcurrent_with_func();
+
+	int timer_event_progressbar;
 
 
 
