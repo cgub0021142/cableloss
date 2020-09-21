@@ -63,8 +63,8 @@ Widget::Widget(QWidget *parent) :
     }
 
     for( int idx = band_24g_start_idx; idx < _countof(Measure_Channel); ++idx){
-        if(Measure_Channel[idx] >= 2500){
-            band_24g_end_idx = idx;
+        if(Measure_Channel[idx] > 2500){
+            band_24g_end_idx = idx - 1;
             break;
         }
     }
@@ -86,7 +86,7 @@ Widget::Widget(QWidget *parent) :
 	port_cnt = 8;
 	port_option_model->setStringList(p8_option);
 	ui->cbo_total_port->setCurrentIndex(2);
-	ui->cbo_port_option->setCurrentIndex(10);
+	ui->cbo_port_option->setCurrentIndex(2);
 
     //initiate table model
     tableModel = new StandardTable(_countof(Measure_Channel), 6*port_cnt, this);
@@ -249,12 +249,6 @@ void Widget::add_QtConcurrent_with_func(){
 	QTcpSocket *tcpSocket = new QTcpSocket(this);
     machine_ip = ui->cbo_ip_destination->currentText();
     tcpSocket->connectToHost(machine_ip, 5499);
-
-    connected = tcpSocket->waitForConnected(1000);
-
-
-
-    tcpSocket->connectToHost(machine_ip, 5499);
     connected = tcpSocket->waitForConnected(1000);
 
         char *preset_cmd []= {
@@ -304,7 +298,7 @@ void Widget::add_QtConcurrent_with_func(){
             "FETCh:RFCorrection:RESource%1:LOSS?\r\n"};
         measure_cmd[2] = measure_cmd[2].arg(vsg_port);
         real_loss.clear();
-        real_loss.reserve(120);
+        real_loss.reserve(150);
         getloss_cnt = 0;
         if( measure_24xxMhz){
             for(int i = 2400, idx = 0; i < 2500; i += 10){
@@ -371,6 +365,8 @@ void Widget::add_QtConcurrent_with_func(){
             tcpSocket->waitForReadyRead();
             tcpSocket->readAll();
         }
+		delete tcpSocket;
+
         calc();
 
         //record ip address in text
@@ -382,11 +378,11 @@ void Widget::add_QtConcurrent_with_func(){
                 ip_record_file.close();
             }
         }
-		delete tcpSocket;
 		
 		enable_gb_setting = true;
-		killTimer(timer_event_progressbar);
 		getloss_cnt = 0;
+		killTimer(timer_event_progressbar);
+
 
 	}
 
@@ -442,13 +438,12 @@ void Widget::on_btn_measure_loss_clicked()
                 //return;
             }
         }else
-
 			check_measured_ref[vsg_port] = true;
 
 		delete tcpSocketTmp;
 
 		timer_event_progressbar = startTimer(20);
-		QFuture<void> f1 = QtConcurrent::run(this, &Widget::add_QtConcurrent_with_func);
+		QtConcurrent::run(this, &Widget::add_QtConcurrent_with_func);
 	}
 	else
 		connect_fail_msg(QString("Can't connect to %1.").arg(machine_ip),30000);
@@ -512,11 +507,11 @@ void Widget::on_cbo_total_port_currentIndexChanged(int index)
         break;
     case 4:
         port_option_model->setStringList(p4_option);
-        ui->cbo_port_option->setCurrentIndex(10);
+        ui->cbo_port_option->setCurrentIndex(2);
         break;
     case 8:
         port_option_model->setStringList(p8_option);
-        ui->cbo_port_option->setCurrentIndex(10);
+        ui->cbo_port_option->setCurrentIndex(2);
         break;
     }
 }
@@ -541,9 +536,9 @@ void Widget::calc()
         double pi , f0 , f1 , p0 , p1;
         pi = f0 = f1 = p0 = p1 = 0.0;
 
-        //////////////////count the quantity of the interpolated loss_data and init with offset///////////////////////
+        //////////////////count the quantity of the interpolated loss_data   and init with offset///////////////////////
         int measure_idx = band_24g_start_idx;
-        int measure_end_idx = _countof(Measure_Channel);
+        int measure_end_idx = _countof(Measure_Channel) - 1;
 
         if(!measure_5xxxMhz){
             measure_end_idx = band_24g_end_idx;
@@ -552,11 +547,11 @@ void Widget::calc()
             measure_idx = band_5g_start_idx;
         }
 
-        int rlt_size = measure_end_idx - measure_idx;
+        int rlt_size = measure_end_idx - measure_idx + 1;
 		final_data.clear();
         final_data.resize(rlt_size);
 
-
+		//check offset has valid value or set to zero.
         bool ok = true;
         float offset_24xx = ui->offset_24xx->text().toFloat(&ok);
         if(!ok)
@@ -585,11 +580,8 @@ void Widget::calc()
         }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //interpolation
-        for(int ref_idx =0, rlt_idx = 0; ref_idx< loss_ant.size() -1,
-
-            measure_idx < measure_end_idx; ++measure_idx )
+		for(int ref_idx =0, rlt_idx = 0; ref_idx < real_loss.size() && measure_idx < measure_end_idx + 1; ++measure_idx )
         {
-
             f0 = real_loss[ref_idx].Freq;
 
             f1 = real_loss[ref_idx + 1].Freq;
@@ -601,26 +593,29 @@ void Widget::calc()
                     p0 = real_loss[ref_idx].Loss;
 
                     p1 = real_loss[ref_idx + 1].Loss;
-                    double tmp_debug = interpolation( f0, p0, f1, p1,  Freq );
-                    final_data[rlt_idx++] +=  tmp_debug;
-                    //qDebug()<<rlt_idx<<","<<tmp_debug;
+                    double interpolation_rlt = interpolation( f0, p0, f1, p1,  Freq );
+                    final_data[rlt_idx++] +=  interpolation_rlt;
+                    //qDebug()<<rlt_idx<<","<<interpolation_rlt;
             }
             else if(Freq > f1){
                     ref_idx++;
                     --measure_idx;
             }
-    }
+		}
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+		//write to table
         QVectorIterator<double> iter(final_data);
+		int row_start_at;
         int row;
         int col = (vsg_port - 1) * 6 + ant_port + 1;
+		int col_for_display = 0;
 		int ref_col = (vsg_port - 1) * 6 + 1;
         if(measure_24xxMhz){
             row = band_24g_start_idx + 1;
         }else if(!measure_24xxMhz){
             row = band_5g_start_idx + 1;
         }
+		row_start_at = row;
         QStandardItemModel *model = qobject_cast<QStandardItemModel *>( ui->tableView->model());
 		if(!ant_port || !check_measured_ref[vsg_port]){
             while(iter.hasNext()){
@@ -640,7 +635,25 @@ void Widget::calc()
                 tableModel->setItem(row++, col, loss);
             }
         }
-
+		//duplicate
+		row = row_start_at;
+		int copy_size = final_data.size();
+		if(vsg_port_for_table_display == 1 && vsg_port == 2){
+			col_for_display = ant_port + 1;
+			for(int i = 0; i < copy_size; i++)
+				tableModel->setItem(row++, col_for_display, tableModel->item(row, col)->clone());
+		}
+			
+		if(vsg_port_for_table_display == 1 && vsg_port == 4){
+            col_for_display = ant_port + 1;
+			for(int i = 0; i < copy_size; i++)
+				tableModel->setItem(row++, col_for_display, tableModel->item(row, col)->clone());
+		}
+		if(vsg_port_for_table_display == 5 && vsg_port == 8){
+            col_for_display = 24 + ant_port + 1;
+			for(int i = 0; i < copy_size; i++)
+				tableModel->setItem(row++, col_for_display, tableModel->item(row, col)->clone());
+		}
         scroll_to_specified();
 }
 

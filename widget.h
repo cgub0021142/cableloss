@@ -91,8 +91,8 @@ private:
     QString loss_24xx[10];
     QString loss_5xxx[100];
     QVector<tbloss_data> real_loss;
-    QVector<tbloss_data> loss_ant;
-    QVector<tbloss_data> loss_ref;
+    //QVector<tbloss_data> loss_ant;
+    //QVector<tbloss_data> loss_ref;
     float inter_polation_24xx[100];
     QString inter_polation_5xxx[1000];
     void change_sketch();
